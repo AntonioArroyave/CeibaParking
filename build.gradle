@@ -20,18 +20,26 @@ group = 'com.ceiba'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
+bootJar {
+    baseName = 'ceibaparking'
+    version = '0.1.0'
+}
 repositories {
 	mavenCentral()
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	
+	compile("org.springframework.boot:spring-boot-starter-data-rest")
+	compile("org.springframework.boot:spring-boot-starter-data-jpa")
+	compile("com.h2database:h2")
+	//compile('org.springframework.boot:spring-boot-starter-web')
+	testCompile("org.springframework.boot:spring-boot-starter-test")
 	testCompile group: 'junit', name: 'junit', version: '4.+'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.18.3'
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	runtime('com.h2database:h2')
 }
 
 test {
