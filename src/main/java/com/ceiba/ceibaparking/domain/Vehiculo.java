@@ -6,7 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
+
 import java.util.Date;
 
 @Entity
@@ -17,15 +18,14 @@ public class Vehiculo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) 
+	private Integer id;
 	
-	  
-	@Column(name = "placa") 
+	@Column(name = "placa") @NotNull
 	private String placa;
 	
-	@Column(name = "tipo")  
-	private String tipoVehiculo;
+	@Column(name = "tipo")   @NotNull @Enumerated(EnumType.STRING)
+	private TipoVehiculo tipoVehiculo;
 	
 //    @Column(nullable = false, updatable = false)
 //    @Temporal(TemporalType.TIMESTAMP)
@@ -37,18 +37,11 @@ public class Vehiculo implements Serializable {
 //    @LastModifiedDate
 //    private Date updatedAt;
 
-	
-//	public Vehiculo(String placa, String tipoVehiculo){
-//		this.tipoVehiculo=tipoVehiculo;
-//		this.placa=placa;
-//		
-//	}
-
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getPlaca() {
@@ -59,11 +52,11 @@ public class Vehiculo implements Serializable {
 		this.placa = placa;
 	}
 
-	public String getTipoVehiculo() {
+	public TipoVehiculo getTipoVehiculo() {
 		return tipoVehiculo;
 	}
 
-	public void setTipoVehiculo(String tipoVehiculo) {
+	public void setTipoVehiculo(TipoVehiculo tipoVehiculo) {
 		this.tipoVehiculo = tipoVehiculo;
 	}
 	
