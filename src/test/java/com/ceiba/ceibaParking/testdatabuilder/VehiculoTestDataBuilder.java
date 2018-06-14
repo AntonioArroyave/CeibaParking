@@ -5,13 +5,14 @@ import com.ceiba.ceibaParking.testdatabuilder.*;;
 
 public class VehiculoTestDataBuilder {
 
-	private long id;
+	private Long id;
 	private String placa;
-	private TipoVehiculo tipoVehiculo;
+	private String tipoVehiculo;
 	
 	public VehiculoTestDataBuilder() {
-		this.placa = "AAA-555";
-		this.tipoVehiculo = TipoVehiculo.CARRO;
+		this.id=(long) 1;
+		this.placa = "AAA";
+		this.tipoVehiculo = "CARRO";
 	}
 	
 	public VehiculoTestDataBuilder whitPlaca(String placa) {
@@ -19,12 +20,12 @@ public class VehiculoTestDataBuilder {
 		return this;
 	}
 	
-	public VehiculoTestDataBuilder whittipoVehiculo(TipoVehiculo tipoVehiculo) {
+	public VehiculoTestDataBuilder whittipoVehiculo(String tipoVehiculo) {
 		this.tipoVehiculo = tipoVehiculo;
 		return this;
 	}
 	
-	public Vehiculo build(){
-		return new Vehiculo(this.placa, this.tipoVehiculo);
+	public Vehiculo build(){ // setiar esto para corregir las preubas
+		return new Vehiculo();
 	}
 }
