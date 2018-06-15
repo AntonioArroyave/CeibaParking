@@ -12,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ceiba.ceibaParking.testdatabuilder.VehiculoTestDataBuilder;
-
-import com.ceiba.ceibaparking.domain.*;
 import com.ceiba.ceibaParking.testdatabuilder.*;
 
 @RunWith(SpringRunner.class)
