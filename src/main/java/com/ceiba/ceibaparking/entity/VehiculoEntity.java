@@ -2,8 +2,13 @@ package com.ceiba.ceibaparking.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Entity
 @Table(name = "vehiculos")
+
 public class VehiculoEntity {
 
 	@Id 
@@ -13,13 +18,14 @@ public class VehiculoEntity {
 	@Column(name = "tipo")  
 	private String tipoVehiculo;
 	
-	@Column(name = "cilindraje")
-	private int cilindraje;
+	@Column(name = "cilindraje") @JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
+	private Integer cilindraje;
 	
 	public String getPlaca() {
 		return placa;
 	}
 
+	@JsonIgnore
 	public int getCilindraje() {
 		return cilindraje;
 	}
@@ -43,7 +49,7 @@ public class VehiculoEntity {
 	@Override
     public String toString() {
         return String.format(
-                "Vheiculo[placa=%s, tipoVheiculo='%s']",
+                "Vehiculo[placa=%s, tipoVehiculo='%s']",
                 placa, tipoVehiculo);
     }
 	public VehiculoEntity() {

@@ -1,18 +1,25 @@
 package com.ceiba.ceibaparking.service.impl;
 
 
+
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.ceiba.ceibaparking.entity.FacturaEntity;
 import com.ceiba.ceibaparking.entity.VehiculoEntity;
-import com.ceiba.ceibaparking.model.Parqueadero;
+import com.ceiba.ceibaparking.model.Constantes;
 import com.ceiba.ceibaparking.model.Vehiculo;
+import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
 import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
 import com.ceiba.ceibaparking.service.VigilanteService;
+import com.ceiba.ceibaparking.validation.ingreso.ValidarIngresoVehiculo;
 
 @Service("vigilanteServiceImpl")
 public class VigilanteServiceImpl implements VigilanteService{
@@ -21,33 +28,71 @@ public class VigilanteServiceImpl implements VigilanteService{
 	VehiculoRepository vehiculoRepoitory;
 	
 	@Autowired
+	FacturaRepository facturaRepoitory;
+	
+	@Autowired
 	@Qualifier("vehiculoConverter")
 	private VehiculoConverter vehiculoConverter;
 	
-	public boolean esPlacaComienzaEnA(String placa){
-		Calendar hoy = Calendar.getInstance();
-		return (placa.charAt(0) == 'A' && ((hoy.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
-									   || (hoy.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)));
+	List<ValidarIngresoVehiculo> validacionesIngreso;
+	
+	@Autowired
+	public VigilanteServiceImpl(List<ValidarIngresoVehiculo> validacionesIngreso){
+		this.validacionesIngreso = validacionesIngreso;
 	}
 
-	public boolean esTipoVehiculoValido(Vehiculo vehiculo){
-		//El parqueadero recibe carros y motos
-		return (vehiculo.getTipoVehiculo() == "Moto") || (vehiculo.getTipoVehiculo() == "Carro");
-	}
 	
 	public void registrarIngreso(Vehiculo vehiculo){
-		if()
+		validacionesIngreso.stream().forEach(validacion -> validacion.validar(vehiculo));
 		vehiculoRepoitory.save(vehiculoConverter.model2Entity(vehiculo));
+		agregarFactura(vehiculoConverter.model2Entity(vehiculo));
 	}
 	
-	public boolean verificarCupo(Vehiculo vehiculo) {
-		return ((vehiculo.getTipoVehiculo() == "Carro" && vehiculoRepoitory.countByTipoVehiculo("Carro") < Parqueadero.LIMITECARROS) 
-				|| (vehiculo.getTipoVehiculo() == "Moto" && vehiculoRepoitory.countByTipoVehiculo("Moto") < Parqueadero.CILINDRAJEMOTO));
+	public FacturaEntity registrarEgreso(String placa) {
+		FacturaEntity factura = facturaRepoitory.findByPlaca(placa);
+		Calendar fechaSalida =  Calendar.getInstance();
+		factura.setFechaSalida(fechaSalida);
+		factura.setTotalHoras(calcularHorasTotales(factura));
+		factura.setTotalPagar(calcularTotalApagar(factura));
+		return factura;		
 	}
-
-
-	public void registrarEgreso(Vehiculo vehiculo) {
 		
+	private int calcularTotalApagar(FacturaEntity factura) {
+		VehiculoEntity vehiculo = vehiculoRepoitory.findById(factura.getPlaca()).get();
+		long diasAPagar=(long) Math.floor( factura.getTotalHoras() / Constantes.HORASMINIMASDELDIA);
+		long horasApagar=factura.getTotalHoras() % Constantes.HORASMINIMASDELDIA;
+		long aumentoCilindraje=0;
+		long totalApagar = 0;
+		
+		if(diasAPagar < 1){ 
+			diasAPagar=0;
+		} 	
+			
+		if(vehiculo.getTipoVehiculo() == "Moto"){
+			if(vehiculo.getCilindraje()>= Constantes.CILINDRAJEMOTO){ 
+				aumentoCilindraje=Constantes.AUMENTOCILINDRAJE;
+			}
+			totalApagar=aumentoCilindraje+diasAPagar*Constantes.VALORDIAMOTO+horasApagar*Constantes.VALORHORAMOTO;
+		}else if (vehiculo.getTipoVehiculo() == "Carro"){
+			totalApagar=diasAPagar*Constantes.VALORDIACARRO+horasApagar*Constantes.VALORDIACARRO;
+				
+		}	
+		
+		return (int) totalApagar;
 	}
+
+	public void agregarFactura(VehiculoEntity vehiculo) {
+		Calendar fechaEntrada = Calendar.getInstance();
+		FacturaEntity factura = new FacturaEntity(fechaEntrada, fechaEntrada, 0, 0, vehiculo);
+		facturaRepoitory.save(factura);
+	}
+	
+	public  int calcularHorasTotales(FacturaEntity factura) {
+		Calendar totalTiempo = new GregorianCalendar();
+		totalTiempo.setTimeInMillis(factura.getFechaEntrada().getTime().getTime()-factura.getFechaSalida().getTime().getTime());
+		return totalTiempo.get(Calendar.HOUR_OF_DAY);
+
+	}
+
 }
 

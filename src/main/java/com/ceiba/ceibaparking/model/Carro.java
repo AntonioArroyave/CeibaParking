@@ -1,10 +1,14 @@
 package com.ceiba.ceibaparking.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Carro extends Vehiculo {
 	
 	private static final String TIPOVEHICULO = "Carro";
 	
-	public Carro(String placa) {
+	@JsonCreator
+	public Carro(@JsonProperty("placa") String placa) {
 		super(placa);
 	}
 	
