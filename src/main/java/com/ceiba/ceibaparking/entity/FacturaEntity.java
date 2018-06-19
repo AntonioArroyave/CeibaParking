@@ -1,8 +1,6 @@
 package com.ceiba.ceibaparking.entity;
 
-
-import java.util.Calendar;
-
+import java.util.Date;
 import javax.persistence.*;
 
 @Entity
@@ -11,16 +9,16 @@ public class FacturaEntity {
 
 	@Id
 	@GeneratedValue
-	@Column(name="id_comprobante_pago")
-	private int idComprobantePago;
+	@Column(name="id_factura")
+	private Integer idFactura;
 	
 	@Column(name="fecha_entrada", columnDefinition="DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Calendar fechaEntrada;
+	private Date fechaEntrada;
 	
 	@Column(name="fecha_salida", columnDefinition="DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Calendar fechaSalida;
+	private Date fechaSalida;
 	
 	@Column(name="total_horas")
 	private int totalHoras;
@@ -28,16 +26,14 @@ public class FacturaEntity {
 	@Column(name="total_pagar")
 	private int totalPagar;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "placa_fk", referencedColumnName = "placa")
-	private VehiculoEntity placa;
+	@Column(name="placa")
+	private String placa;
 
-	public Calendar getFechaEntrada() {
+	public Date getFechaEntrada() {
 		return fechaEntrada;
 	}
 	
-
-	public Calendar getFechaSalida() {
+	public Date getFechaSalida() {
 		return fechaSalida;
 	}
 
@@ -50,10 +46,10 @@ public class FacturaEntity {
 	}
 
 	public String getPlaca() {
-		return placa.getPlaca();
+		return placa;
 	}
 
-	public void setFechaSalida(Calendar fechaSalida) {
+	public void setFechaSalida(Date fechaSalida) {
 		this.fechaSalida = fechaSalida;
 	}
 
@@ -66,7 +62,7 @@ public class FacturaEntity {
 	}
 
 
-	public FacturaEntity(Calendar fechaEntrada, Calendar fechaSalida, int totalHoras, int totalPagar, VehiculoEntity placa) {
+	public FacturaEntity(Date fechaEntrada, Date fechaSalida, int totalHoras, int totalPagar, String placa) {
 		super();
 		this.fechaEntrada = fechaEntrada;
 		this.fechaSalida = fechaSalida;
@@ -75,11 +71,11 @@ public class FacturaEntity {
 		this.placa = placa;
 	}
 	
-	public void setFechaEntrada(Calendar fechaEntrada) {
+	public void setFechaEntrada(Date fechaEntrada) {
 		this.fechaEntrada = fechaEntrada;
 	}
 
-	public void setPlacaFk(VehiculoEntity placa) {
+	public void setPlacaFk(String placa) {
 		this.placa = placa;
 	}
 

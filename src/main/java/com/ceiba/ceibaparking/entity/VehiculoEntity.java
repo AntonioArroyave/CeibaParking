@@ -19,7 +19,7 @@ public class VehiculoEntity {
 	private String tipoVehiculo;
 	
 	@Column(name = "cilindraje") @JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
-	private Integer cilindraje;
+	private int cilindraje;
 	
 	public String getPlaca() {
 		return placa;

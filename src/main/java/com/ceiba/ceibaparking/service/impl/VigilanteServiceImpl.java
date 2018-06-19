@@ -1,16 +1,13 @@
 package com.ceiba.ceibaparking.service.impl;
 
-
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.ceiba.ceibaparking.controller.ParkingController;
 import com.ceiba.ceibaparking.entity.FacturaEntity;
 import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import com.ceiba.ceibaparking.model.Constantes;
@@ -21,8 +18,13 @@ import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
 import com.ceiba.ceibaparking.service.VigilanteService;
 import com.ceiba.ceibaparking.validation.ingreso.ValidarIngresoVehiculo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Service("vigilanteServiceImpl")
 public class VigilanteServiceImpl implements VigilanteService{
+	
+	private static final Log LOG = LogFactory.getLog(VigilanteServiceImpl.class);
 
 	@Autowired
 	VehiculoRepository vehiculoRepoitory;
@@ -48,51 +50,54 @@ public class VigilanteServiceImpl implements VigilanteService{
 		agregarFactura(vehiculoConverter.model2Entity(vehiculo));
 	}
 	
-	public FacturaEntity registrarEgreso(String placa) {
-		FacturaEntity factura = facturaRepoitory.findByPlaca(placa);
-		Calendar fechaSalida =  Calendar.getInstance();
+	public FacturaEntity registrarEgreso(VehiculoEntity vehiculo) {
+		FacturaEntity factura = facturaRepoitory.findByPlaca(vehiculo.getPlaca());
+		Date fechaSalida =  new Date();
 		factura.setFechaSalida(fechaSalida);
-		factura.setTotalHoras(calcularHorasTotales(factura));
-		factura.setTotalPagar(calcularTotalApagar(factura));
+		int horasTotales = (int) calcularHorasTotales(factura, fechaSalida);
+		factura.setTotalHoras(horasTotales);
+		factura.setTotalPagar(calcularTotalApagar(vehiculo, horasTotales));
+		facturaRepoitory.save(factura);
 		return factura;		
 	}
 		
-	private int calcularTotalApagar(FacturaEntity factura) {
-		VehiculoEntity vehiculo = vehiculoRepoitory.findById(factura.getPlaca()).get();
-		long diasAPagar=(long) Math.floor( factura.getTotalHoras() / Constantes.HORASMINIMASDELDIA);
-		long horasApagar=factura.getTotalHoras() % Constantes.HORASMINIMASDELDIA;
-		long aumentoCilindraje=0;
+	public int calcularTotalApagar(VehiculoEntity vehiculo, int horasTotales) {
+		long diasAPagar= horasTotales / Constantes.HORASDELDIA;
+		LOG.info("diasApagar: "+ diasAPagar);
+		int horasApagar=0;
+		int aumentoCilindraje=0;
 		long totalApagar = 0;
-		
-		if(diasAPagar < 1){ 
-			diasAPagar=0;
-		} 	
-			
-		if(vehiculo.getTipoVehiculo() == "Moto"){
-			if(vehiculo.getCilindraje()>= Constantes.CILINDRAJEMOTO){ 
-				aumentoCilindraje=Constantes.AUMENTOCILINDRAJE;
-			}
+		if ((horasTotales % Constantes.HORASDELDIA) >= Constantes.HORASMINIMASDELDIA
+				&& (horasTotales % Constantes.HORASDELDIA) <= Constantes.HORASDELDIA-1) {
+			diasAPagar++; 
+		} else {
+			horasApagar = horasTotales % Constantes.HORASDELDIA;
+		}
+		LOG.info("horasApagar: "+ horasApagar);	
+		if(vehiculo.getTipoVehiculo().equals("Moto")) {
+			if(vehiculo.getCilindraje()>= Constantes.CILINDRAJEMOTO) aumentoCilindraje=Constantes.AUMENTOCILINDRAJE;
 			totalApagar=aumentoCilindraje+diasAPagar*Constantes.VALORDIAMOTO+horasApagar*Constantes.VALORHORAMOTO;
-		}else if (vehiculo.getTipoVehiculo() == "Carro"){
-			totalApagar=diasAPagar*Constantes.VALORDIACARRO+horasApagar*Constantes.VALORDIACARRO;
-				
-		}	
-		
-		return (int) totalApagar;
+		}else if (vehiculo.getTipoVehiculo().equals("Carro")){
+			totalApagar=diasAPagar*Constantes.VALORDIACARRO+horasApagar*Constantes.VALORHORACARRO;		
+		}
+		LOG.info("totalAPagar: "+ totalApagar);	
+		return  (int) totalApagar;
 	}
 
 	public void agregarFactura(VehiculoEntity vehiculo) {
-		Calendar fechaEntrada = Calendar.getInstance();
-		FacturaEntity factura = new FacturaEntity(fechaEntrada, fechaEntrada, 0, 0, vehiculo);
+		Date fechaEntrada = new Date();
+		FacturaEntity factura = new FacturaEntity(fechaEntrada, fechaEntrada, 0, 0, vehiculo.getPlaca());
 		facturaRepoitory.save(factura);
 	}
 	
-	public  int calcularHorasTotales(FacturaEntity factura) {
-		Calendar totalTiempo = new GregorianCalendar();
-		totalTiempo.setTimeInMillis(factura.getFechaEntrada().getTime().getTime()-factura.getFechaSalida().getTime().getTime());
-		return totalTiempo.get(Calendar.HOUR_OF_DAY);
-
-	}
+	public  long calcularHorasTotales(FacturaEntity factura, Date fechaSalida) {
+		long horasTotales = (fechaSalida.getTime() - factura.getFechaEntrada().getTime())
+				/ (Constantes.FACTORMILISEG2HORAS);
+		if (horasTotales % Constantes.FACTORMILISEG2HORAS != 0){
+			horasTotales++;}
+		LOG.info("Horas totales calculadas: "+ horasTotales);
+		return horasTotales;
+	}	
 
 }
 

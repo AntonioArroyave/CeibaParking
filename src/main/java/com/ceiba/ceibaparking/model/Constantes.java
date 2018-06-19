@@ -11,4 +11,10 @@ public class Constantes {
     public static final int VALORDIACARRO=8000;
     public static final int VALORDIAMOTO=4000;
     public static final String 	VALIDACIONLETRA = "A";
+    public static final int HORASDELDIA = 24;
+    public static final int FACTORMILISEG2HORAS = 3600000;
+    
+    private Constantes(){
+    	throw new IllegalStateException("Utility class");
+    }
 }

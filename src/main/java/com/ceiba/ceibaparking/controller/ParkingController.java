@@ -61,8 +61,7 @@ public class ParkingController {
 
 	@DeleteMapping("/vehiculo/{placa}")
 	public ResponseEntity<Object> deleteVehiculo(@PathVariable(value = "placa") String placa) {
-	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa)
-	            .orElseThrow(() -> new ResourceNotFoundException("Veichulo", "placa", placa));
+	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ResourceNotFoundException("Veichulo", "placa", placa));
 
 	    vehiculoRepoitory.delete(vehiculo);
 	    
@@ -71,8 +70,8 @@ public class ParkingController {
 	
 	@GetMapping("/facturar/{placa}")
 	public Optional<VehiculoEntity> facturar(@PathVariable(value = "placa") String placa) {
-	
-		vigilanteService.registrarEgreso(placa);
+		VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ResourceNotFoundException("Veichulo", "placa", placa));
+		vigilanteService.registrarEgreso(vehiculo);
 		return null;
 	}
 	

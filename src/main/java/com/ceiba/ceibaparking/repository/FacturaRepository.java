@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.ceiba.ceibaparking.entity.FacturaEntity;
+import com.ceiba.ceibaparking.entity.VehiculoEntity;
 
 
 @Repository("facturaRepository")
 public interface FacturaRepository extends JpaRepository<FacturaEntity, Serializable> {
 
-	FacturaEntity findByPlaca(@Param("placa_fk") String placa_fk);
+	FacturaEntity findByPlaca(@Param("placa_fk") String vehiculo);
 }
