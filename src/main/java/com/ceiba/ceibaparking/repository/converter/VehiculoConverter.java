@@ -31,5 +31,14 @@ public class VehiculoConverter {
 		vehiculoEntity.setTipoVehiculo(carro.getTipoVehiculo());
 		return vehiculoEntity;
 	}
+	
+	public Vehiculo entity2Model(VehiculoEntity vehiculoEntity){
+		
+		if(vehiculoEntity.getTipoVehiculo().equals("Carro")){
+			return new Carro(vehiculoEntity.getPlaca());
+		}else{ //vehiculoEntity.getTipoVehiculo().equals("Moto")
+			return new Moto(vehiculoEntity.getPlaca(), 0); //Corregir para retornar el cilindraje correcto
+		}
+	}
 
 }

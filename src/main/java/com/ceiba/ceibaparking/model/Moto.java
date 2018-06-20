@@ -1,8 +1,9 @@
 package com.ceiba.ceibaparking.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+@JsonIgnoreProperties({"TIPOVEHICULO"})
 public class Moto extends Vehiculo {
 	private static final String TIPOVEHICULO = "Moto";
 	private int cilindraje;
