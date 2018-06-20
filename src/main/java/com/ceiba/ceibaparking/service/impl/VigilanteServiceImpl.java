@@ -51,7 +51,7 @@ public class VigilanteServiceImpl implements VigilanteService{
 	}
 	
 	public FacturaEntity registrarEgreso(VehiculoEntity vehiculo) {
-		FacturaEntity factura = facturaRepoitory.findByPlaca(vehiculo.getPlaca());
+		FacturaEntity factura = facturaRepoitory.findTopByPlaca(vehiculo.getPlaca());
 		Date fechaSalida =  new Date();
 		factura.setFechaSalida(fechaSalida);
 		int horasTotales = (int) calcularHorasTotales(factura, fechaSalida);

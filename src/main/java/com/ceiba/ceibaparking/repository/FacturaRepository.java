@@ -12,4 +12,5 @@ import com.ceiba.ceibaparking.entity.VehiculoEntity;
 public interface FacturaRepository extends JpaRepository<FacturaEntity, Serializable> {
 
 	FacturaEntity findByPlaca(@Param("placa_fk") String vehiculo);
+	FacturaEntity findTopByPlaca(@Param("placa_fk") String vehiculo);
 }
