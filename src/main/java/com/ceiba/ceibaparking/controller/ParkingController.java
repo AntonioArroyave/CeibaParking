@@ -18,12 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 @RestController
 @RequestMapping("/")
 public class ParkingController {
@@ -53,8 +56,26 @@ public class ParkingController {
 
 	@PostMapping("/vehiculo") @CrossOrigin(origins = "http://localhost:4200")
 	public Optional<VehiculoEntity> registrarVehiculo(@RequestBody Vehiculo vehiculo) {
+		    LOG.info("*******Post /vehiculo whit data :   "+ vehiculo);
 			vigilanteService.registrarIngreso(vehiculo);
 			return vehiculoRepoitory.findById(vehiculo.getPlaca());
+	}
+	
+	@GetMapping("/vehiculos") @CrossOrigin(origins = "http://localhost:4200")
+	public ResponseEntity<String> getVehiculos() throws IOException {
+		List<VehiculoEntity> vehiculosEntity =vehiculoRepoitory.findAll();
+		List<String> jsonString = new ArrayList<>();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		for (VehiculoEntity vehiculoEntity : vehiculosEntity) {
+			Vehiculo vehiculo = vehiculoConverter.entity2Model(vehiculoEntity);
+			Date fechaIngreso = facturaRepoitory.findTopByPlaca(vehiculoEntity.getPlaca()).getFechaEntrada();
+			ObjectWriter writer = mapper.writerFor(Vehiculo.class).withAttribute("fechaIngreso", fechaIngreso.toString());
+			jsonString.add(writer.writeValueAsString(vehiculo));
+		}
+		final ObjectMapper mapperList = new ObjectMapper();
+		mapperList.writeValue(out, jsonString);
+		return new ResponseEntity<>(jsonString.toString(), HttpStatus.OK);
+		
 	}
 	
 	@GetMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
