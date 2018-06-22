@@ -1,6 +1,7 @@
 package com.ceiba.ceibaparking.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,7 +16,7 @@ public class VehiculoEntity {
 	@Column(name = "placa")
 	private String placa;
 	
-	@Column(name = "tipo")  
+	@Column(name = "tipo")  @NotNull
 	private String tipoVehiculo;
 	
 	@Column(name = "cilindraje") @JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)

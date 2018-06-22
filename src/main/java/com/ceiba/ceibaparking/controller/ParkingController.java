@@ -6,10 +6,10 @@ import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
 import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
 import com.ceiba.ceibaparking.service.VigilanteService;
-import com.ceiba.ceibaparking.validation.ingreso.ValidarCapacidadDeCarros;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ceiba.ceibaparking.entity.FacturaEntity;
 import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,7 +65,7 @@ public class ParkingController {
 	public ResponseEntity<String> getVehiculos() throws IOException {
 		List<VehiculoEntity> vehiculosEntity =vehiculoRepoitory.findAll();
 		List<String> jsonString = new ArrayList<>();
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		for (VehiculoEntity vehiculoEntity : vehiculosEntity) {
 			Vehiculo vehiculo = vehiculoConverter.entity2Model(vehiculoEntity);
 			Date fechaIngreso = facturaRepoitory.findTopByPlaca(vehiculoEntity.getPlaca()).getFechaEntrada();
@@ -103,19 +103,17 @@ public class ParkingController {
 	}
 
 	@DeleteMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
-	public ResponseEntity<Object> deleteVehiculo(@PathVariable(value = "placa") String placa) {
+	public FacturaEntity deleteVehiculo(@PathVariable(value = "placa") String placa) {
 	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ResourceNotFoundException("Veichulo", "placa", placa));
-
+	    FacturaEntity facturaFinal = vigilanteService.registrarEgreso(vehiculo);	
 	    vehiculoRepoitory.delete(vehiculo);
-	    
-	    return ResponseEntity.ok().build();
+	    return facturaFinal;
 	}
 	
 	@GetMapping("/facturar/{placa}") @CrossOrigin(origins = "http://localhost:4200")
-	public Optional<VehiculoEntity> facturar(@PathVariable(value = "placa") String placa) {
+	public FacturaEntity facturar(@PathVariable(value = "placa") String placa) {
 		VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ResourceNotFoundException("Veichulo", "placa", placa));
-		vigilanteService.registrarEgreso(vehiculo);
-		return null;
+		return vigilanteService.registrarEgreso(vehiculo);	
 	}
 	
 }
