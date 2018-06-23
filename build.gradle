@@ -1,3 +1,6 @@
+configurations {
+    jaxb
+}
 buildscript {
 	ext {
 		springBootVersion = '2.0.2.RELEASE'
@@ -20,12 +23,46 @@ group = 'com.ceiba'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
-bootJar {
-    baseName = 'ceibaparking'
-    version = '0.1.0'
-}
+
 repositories {
 	mavenCentral()
+}
+
+task genJaxb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "https://www.superfinanciera.gov.co/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService?WSDL"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir, schema: schema,
+                    package: "TRM.wsdl") {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
 }
 
 sourceCompatibility = 1.8
@@ -36,6 +73,9 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-data-rest")
 	compile("org.springframework.boot:spring-boot-starter-data-jpa")
 	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.ws:spring-ws-core")
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+    jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
 	compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.0.2.RELEASE'
 	runtime('mysql:mysql-connector-java')
 	testCompile("org.springframework.boot:spring-boot-starter-test")
@@ -51,4 +91,15 @@ test {
 	reports.junitXml.destination = file("jacoco/test-results")
 }
 jacocoTestReport.dependsOn(test)
+
+bootJar {
+    baseName = 'ceibaparking'
+    version = '0.1.0'
+    from genJaxb.classesDir
+}
+
+task afterEclipseImport {
+    dependsOn genJaxb
+}
+
 
