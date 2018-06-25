@@ -29,8 +29,6 @@ public abstract class Vehiculo {
 	public Vehiculo(String placa) {
 		this.placa = placa;
 	}
-	
-	public Vehiculo() {
-	}
+
 	public abstract String getTipoVehiculo();
 }

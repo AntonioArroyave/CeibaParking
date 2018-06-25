@@ -19,16 +19,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
+
+import TRMClient.*;
+import co.com.sc.nexura.superfinanciera.action.generic.services.trm.action.*;
+
+
 @RestController
 @RequestMapping("/")
 public class ParkingController {
@@ -116,6 +124,14 @@ public class ParkingController {
 	public FacturaEntity facturar(@PathVariable(value = "placa") String placa) {
 		VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
 		return vigilanteService.registrarEgreso(vehiculo);	
+	}
+	
+	@GetMapping("/TRM") @CrossOrigin(origins = "http://localhost:4200")
+	public Float getTRM() throws DatatypeConfigurationException {
+		String enpoint = "https://www.superfinanciera.gov.co/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService";
+		TrmClient trmClient = new TrmClient(enpoint);
+		LOG.info("**************Iniciando queryTRM: "+trmClient.getTrm());
+		return 	trmClient.getTrm();
 	}
 	
 }
