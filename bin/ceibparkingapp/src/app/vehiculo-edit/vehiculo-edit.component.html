@@ -1,0 +1,21 @@
+<mat-card>
+  <form #vehiculoForm="ngForm" (ngSubmit)="save(vehiculoForm.value)">
+    <mat-card-header>
+      <mat-card-title><h2>{{vehiculo.placa ? 'Editar' : 'Registrar'}} Vehiculo</h2></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+	    <input type="hidden" name="href" [(ngModel)]="vehiculo.href">
+      <mat-form-field>
+        <input matInput placeholder="Placa" [(ngModel)]="vehiculo.placa"
+               required name="name" #name>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit"
+              [disabled]="!vehiculoForm.form.valid">Registrar</button>
+      <button mat-raised-button color="secondary" (click)="remove(vehiculo.href)"
+              *ngIf="car.href" type="button">Borrar</button>
+      <a mat-button routerLink="/vehiculo-list">Cancelar</a>
+    </mat-card-actions>
+   </form>
+</mat-card>

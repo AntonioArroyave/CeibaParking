@@ -1,5 +1,9 @@
 package com.ceiba.ceibaparking.service.impl;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -51,8 +55,8 @@ public class VigilanteServiceImpl implements VigilanteService{
 	}
 	
 	public FacturaEntity registrarEgreso(VehiculoEntity vehiculo) {
-		FacturaEntity factura = facturaRepoitory.findTopByPlaca(vehiculo.getPlaca());
-		Date fechaSalida =  new Date();
+		FacturaEntity factura = facturaRepoitory.findFirstByPlacaOrderByFechaEntradaDesc(vehiculo.getPlaca());
+		Date fechaSalida =  Constantes.getFechaActual().getTime();
 		factura.setFechaSalida(fechaSalida);
 		int horasTotales = (int) calcularHorasTotales(factura, fechaSalida);
 		factura.setTotalHoras(horasTotales);
@@ -85,7 +89,8 @@ public class VigilanteServiceImpl implements VigilanteService{
 	}
 
 	public void agregarFactura(VehiculoEntity vehiculo) {
-		Date fechaEntrada = new Date();
+		Date fechaEntrada = Constantes.getFechaActual().getTime();
+		LOG.info("****fechaEntrada: "+ fechaEntrada.toString());	
 		FacturaEntity factura = new FacturaEntity(fechaEntrada, fechaEntrada, 0, 0, vehiculo.getPlaca());
 		facturaRepoitory.save(factura);
 	}

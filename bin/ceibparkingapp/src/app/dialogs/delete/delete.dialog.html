@@ -1,0 +1,18 @@
+<div class="container">
+  <h3 mat-dialog-title>Facturar</h3>
+  <div mat-dialog-content>
+    Desea facturar el vehiculo Placa: {{data.placa}} ?
+    <p></p>
+<!--     Tipo: {{data.TipoVehiculo}} -->
+<!--     <p></p> -->
+<!--     FechaEntrada: {{data.fachaEntrada}} -->
+<!--     <p></p> -->
+<!--     Cilindraje: {{data.cilindraje}} -->
+<!--     <p></p> -->
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="1" (click)="confirmDelete()">Facturar</button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+  </div>
+</div>

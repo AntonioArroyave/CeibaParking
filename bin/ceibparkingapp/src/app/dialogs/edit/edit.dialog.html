@@ -1,0 +1,54 @@
+<div class="container">
+  <h3 mat-dialog-title>Editar vehiculo con placa: {{data.placa}}</h3>
+
+  <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput #input class="form-control" placeholder="Placa" [(ngModel)]="data.placa" name="placa" required >
+        <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <mat-select matInput #input class="form-control" placeholder="Tipo" [(ngModel)]="data.TipoVehiculo" name="tipoVehiculo" required >
+		    <mat-option *ngFor="let tipo of tipos" [value]="tipo.value">
+		      {{ tipo.viewValue }}
+		    </mat-option>
+        </mat-select>
+        <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+    </div>
+
+<!--     Contains mat-hint for characters count and has maxLengt set -->
+<!--     <div class="form"> -->
+<!--       <mat-form-field color="accent"> -->
+<!--         <input matInput #inputstate class="form-control" placeholder="Cilindraje" [(ngModel)]="data.cilindraje" name="cilindraje" maxlength="10" required > -->
+<!--         <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error> -->
+<!--         <mat-hint align="end">{{inputstate.value?.length || 0}}/10</mat-hint> -->
+<!--       </mat-form-field> -->
+<!--     </div> -->
+    
+<!--      <div class="form"> -->
+<!--       <mat-form-field color="accent"> -->
+<!--         <input matInput #inputstate class="form-control" placeholder="Fecha de entrada" [(ngModel)]="fechaEntrad" name="fechaEntrada" maxlength="10" required > -->
+<!--         <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error> -->
+<!--         <mat-hint align="end">{{inputstate.value?.length || 0}}/10</mat-hint> -->
+<!--       </mat-form-field> -->
+<!--     </div> -->
+    
+<!--     <div class="form"> -->
+<!--     	<mat-form-field> -->
+<!-- 	  		<input matInput [matDatepicker]="picker" placeholder="Fecha de entrada" [(ngModel)]="data.fechaEntrada" name="fechaEntrada"> -->
+<!-- 	  		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
+<!-- 	  		<mat-datepicker #picker></mat-datepicker> -->
+<!-- 		</mat-form-field> -->
+<!--  	</div> -->
+
+    <div mat-dialog-actions>
+      <button mat-button [type]="submit" [disabled]="!formControl.valid" [mat-dialog-close]="1" (click)="stopEdit()">Editar</button>
+      <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+    </div>
+  </form>
+</div>
