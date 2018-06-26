@@ -63,7 +63,7 @@ public class Vigilante {
 	
 	@GetMapping("/vehiculos") @CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<String> getVehiculos() throws IOException {
-		List<VehiculoEntity> vehiculosEntity =vehiculoRepoitory.findAll();
+		List<VehiculoEntity> vehiculosEntity = vehiculoRepoitory.findAll();
 		List<String> jsonString = new ArrayList<>();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		for (VehiculoEntity vehiculoEntity : vehiculosEntity) {

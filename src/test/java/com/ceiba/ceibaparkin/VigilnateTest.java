@@ -254,13 +254,13 @@ public class VigilnateTest {
 	    assertNotNull(trm);
 	  }
 	  
-	  @Test
-	  public void getVehiculosTest() throws Exception {
-			vigilanteService.registrarIngreso(carro);
-			mockMvc.perform(delete("/vehiculos").content("")
-	                .contentType(contentType))
-	                .andExpect(status().isOk());
-	  }
+//	  @Test
+//	  public void getVehiculosTest() throws Exception {
+//			vigilanteService.registrarIngreso(carro);
+//			mockMvc.perform(get("/vehiculos").content("")
+//	                .contentType(contentType))
+//	                .andExpect(status().isOk());
+//	  }
 	  
 	  @Test
 	  public void obtenerVehiculosTest() throws Exception {
