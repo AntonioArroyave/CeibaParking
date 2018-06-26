@@ -80,7 +80,7 @@ public class Vigilante {
 	@GetMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<String> getVehiculoById(@PathVariable(value = "placa") String placa) throws JsonProcessingException {
 		try {
-			VehiculoEntity vehiculoEntity = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo con placa"+placa+ "no encontrado"));
+			VehiculoEntity vehiculoEntity = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion(Constantes.VEHICULONOENCONTRADOMESSAGE+placa));
 			Vehiculo vehiculo = vehiculoConverter.entity2Model(vehiculoEntity);
 			Date fechaIngreso = facturaRepoitory.findFirstByPlacaOrderByFechaEntradaDesc(placa).getFechaEntrada();
 			ObjectWriter writer = mapper.writerFor(Vehiculo.class).withAttribute("fechaIngreso", fechaIngreso.toString());
@@ -96,7 +96,7 @@ public class Vigilante {
 	public VehiculoEntity updateVehiculo(@PathVariable(value = "placa") String placa,
 	                                        @Valid @RequestBody VehiculoEntity vehiculoDetails) {
 	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa)
-	            .orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
+	            .orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo con placa"+placa));
 	    vehiculo.setPlaca(vehiculoDetails.getPlaca());
 	    vehiculo.setTipoVehiculo(vehiculoDetails.getTipoVehiculo());
 	    return vehiculoRepoitory.save(vehiculo);
@@ -104,7 +104,7 @@ public class Vigilante {
 
 	@DeleteMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
 	public FacturaEntity deleteVehiculo(@PathVariable(value = "placa") String placa) {
-	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
+	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion(Constantes.VEHICULONOENCONTRADOMESSAGE+placa));
 	    FacturaEntity facturaFinal = vigilanteService.registrarEgreso(vehiculo);	
 	    vehiculoRepoitory.delete(vehiculo);
 	    return facturaFinal;
@@ -112,7 +112,7 @@ public class Vigilante {
 	
 	@GetMapping("/facturar/{placa}") @CrossOrigin(origins = "http://localhost:4200")
 	public FacturaEntity facturar(@PathVariable(value = "placa") String placa) {
-		VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
+		VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion(Constantes.VEHICULONOENCONTRADOMESSAGE+placa));
 		return vigilanteService.registrarEgreso(vehiculo);	
 	}
 	

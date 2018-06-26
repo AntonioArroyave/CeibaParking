@@ -34,14 +34,11 @@ import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import com.ceiba.ceibaparking.exception.ParqueaderoExcepcion;
 import com.ceiba.ceibaparking.model.Carro;
 import com.ceiba.ceibaparking.model.Moto;
-import com.ceiba.ceibaparking.model.Vehiculo;
 import com.ceiba.ceibaparking.model.Constantes;
 import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
 import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
 import com.ceiba.ceibaparking.service.impl.VigilanteServiceImpl;
-import com.ceiba.ceibaparking.validation.ingreso.ValidarPlacaIniciadaEnA;
-
 import co.com.sc.nexura.superfinanciera.action.generic.services.trm.action.*;
 
 import org.apache.commons.logging.Log;
@@ -255,6 +252,14 @@ public class VigilnateTest {
 		TrmClient trmClient = new TrmClient(Constantes.ENDPOINT);
 		Float trm=trmClient.getTrm();
 	    assertNotNull(trm);
+	  }
+	  
+	  @Test
+	  public void getVehiculosTest() throws Exception {
+			vigilanteService.registrarIngreso(carro);
+			mockMvc.perform(delete("/vehiculos").content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
 	  }
 	  
 	  @Test

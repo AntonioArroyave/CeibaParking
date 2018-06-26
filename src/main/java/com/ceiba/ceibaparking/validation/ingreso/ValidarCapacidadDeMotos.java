@@ -11,8 +11,6 @@ import com.ceiba.ceibaparking.model.Constantes;
 import com.ceiba.ceibaparking.model.Vehiculo;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class ValidarCapacidadDeMotos implements ValidarIngresoVehiculo {
 	@Autowired

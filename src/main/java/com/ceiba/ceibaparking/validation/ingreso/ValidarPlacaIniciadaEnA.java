@@ -5,7 +5,6 @@ import java.util.Calendar;
 import com.ceiba.ceibaparking.exception.ParqueaderoExcepcion;
 import com.ceiba.ceibaparking.model.Carro;
 import com.ceiba.ceibaparking.model.Vehiculo;
-import com.ceiba.ceibaparking.service.impl.VigilanteServiceImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

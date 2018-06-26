@@ -16,7 +16,8 @@ public class Constantes {
     public static final int HORASDELDIA = 24;
     public static final long FACTORMILISEG2HORAS = 3600000;
     public static final String ENDPOINT = "https://www.superfinanciera.gov.co/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService";
-    
+    public static final String VEHICULONOENCONTRADOMESSAGE = "Vehiculo no encontadado, placa buscada: ";
+
     private Constantes(){
     	throw new IllegalStateException("Utility class");
     }
