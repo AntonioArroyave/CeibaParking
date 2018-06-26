@@ -7,9 +7,22 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -21,6 +34,7 @@ import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import com.ceiba.ceibaparking.exception.ParqueaderoExcepcion;
 import com.ceiba.ceibaparking.model.Carro;
 import com.ceiba.ceibaparking.model.Moto;
+import com.ceiba.ceibaparking.model.Vehiculo;
 import com.ceiba.ceibaparking.model.Constantes;
 import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
@@ -36,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 @Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=CeibaParkingApplication.class)
+@WebAppConfiguration
 public class VigilnateTest {
 	
 	private static final Log LOG = LogFactory.getLog(VigilnateTest.class);
@@ -59,10 +74,42 @@ public class VigilnateTest {
 	Carro carro;
 	Moto moto;
 	
+	//desde aqui
+	
+    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(),
+            Charset.forName("utf8"));
+
+    private MockMvc mockMvc;
+    private HttpMessageConverter mappingJackson2HttpMessageConverter;
+    
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+    
+    @Autowired
+    void setConverters(HttpMessageConverter<?>[] converters) {
+
+        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+            .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
+            .findAny()
+            .orElse(null);
+
+        assertNotNull("the JSON message converter must not be null",
+                this.mappingJackson2HttpMessageConverter);
+    }
+    
+   
 	@Before
 	public void arrange() {
 		carro = new Carro("BBC-123");
 		moto = new Moto("CCC-456",600);
+		VehiculoEntity carroEntity = vehiculoConverter.model2Entity(carro);
+		VehiculoEntity motoEntity = vehiculoConverter.model2Entity(moto);
+		this.mockMvc = webAppContextSetup(webApplicationContext).build(); 
+		facturaRepository.deleteAllInBatch();
+		vehiculoRepository.deleteAllInBatch();
+		vehiculoRepository.save(carroEntity);
+		vehiculoRepository.save(motoEntity);
 	}
 	
 	@After
@@ -208,5 +255,27 @@ public class VigilnateTest {
 		TrmClient trmClient = new TrmClient(Constantes.ENDPOINT);
 		Float trm=trmClient.getTrm();
 	    assertNotNull(trm);
+	  }
+	  
+	  @Test
+	  public void obtenerVehiculosTest() throws Exception {
+		  mockMvc.perform(get("/vehiculo").content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
+	  
+	  @Test
+	  public void getVehiculoByIdTest() throws Exception {
+			vigilanteService.registrarIngreso(carro);
+			mockMvc.perform(get("/vehiculo/"+carro.getPlaca()).content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
+	  
+	  @Test
+	  public void getVehiculoByIdVehiculoNotFoundTest() throws Exception {
+		  mockMvc.perform(get("/vehiculo/***").content("")
+	                .contentType(contentType))
+	                .andExpect(status().isNotFound());
 	  }
 }

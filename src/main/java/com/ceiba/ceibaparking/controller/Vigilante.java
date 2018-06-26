@@ -79,13 +79,17 @@ public class Vigilante {
 	
 	@GetMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<String> getVehiculoById(@PathVariable(value = "placa") String placa) throws JsonProcessingException {
-		VehiculoEntity vehiculoEntity = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
-		Vehiculo vehiculo = vehiculoConverter.entity2Model(vehiculoEntity);
-		Date fechaIngreso = facturaRepoitory.findFirstByPlacaOrderByFechaEntradaDesc(placa).getFechaEntrada();
-		ObjectWriter writer = mapper.writerFor(Vehiculo.class).withAttribute("fechaIngreso", fechaIngreso.toString());
-		String jsonString = writer.writeValueAsString(vehiculo);
-		return new ResponseEntity<>(jsonString, HttpStatus.OK);
-		
+		try {
+			VehiculoEntity vehiculoEntity = vehiculoRepoitory.findById(placa).orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo con placa"+placa+ "no encontrado"));
+			Vehiculo vehiculo = vehiculoConverter.entity2Model(vehiculoEntity);
+			Date fechaIngreso = facturaRepoitory.findFirstByPlacaOrderByFechaEntradaDesc(placa).getFechaEntrada();
+			ObjectWriter writer = mapper.writerFor(Vehiculo.class).withAttribute("fechaIngreso", fechaIngreso.toString());
+			String jsonString = writer.writeValueAsString(vehiculo);
+			return new ResponseEntity<>(jsonString, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<>("Vehiculo no encotnrado", HttpStatus.NOT_FOUND);
+		}	
 	}
 
 	@PutMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
