@@ -278,4 +278,36 @@ public class VigilnateTest {
 	                .contentType(contentType))
 	                .andExpect(status().isNotFound());
 	  }
+	  
+	  @Test
+	  public void getTRMTest() throws Exception {
+		  mockMvc.perform(get("/TRM").content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
+	  
+	  @Test
+	  public void facturarTest() throws Exception {
+		  vigilanteService.registrarIngreso(carro);
+		  mockMvc.perform(get("/facturar/"+carro.getPlaca()).content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
+	  
+	  @Test
+	  public void deleteVehiculoTest() throws Exception {
+			vigilanteService.registrarIngreso(carro);
+			mockMvc.perform(delete("/vehiculo/"+carro.getPlaca()).content("")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
+	  
+//	  @Test
+//	  public void updateVehiculoTest() throws Exception {
+//			vigilanteService.registrarIngreso(carro);
+//			VehiculoEntity carroEntity = vehiculoConverter.model2Entity(carro);
+//			mockMvc.perform(delete("/vehiculo/"+carro.getPlaca()).content("") //carro.getPlaca(),carroEntity
+//	                .contentType(contentType))
+//	                .andExpect(status().isOk());
+//	  }
 }
