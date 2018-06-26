@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.ceiba.ceibaparking.controller.ParkingController;
+import com.ceiba.ceibaparking.controller.Vigilante;
 import com.ceiba.ceibaparking.entity.FacturaEntity;
 import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import com.ceiba.ceibaparking.model.Constantes;

@@ -15,12 +15,12 @@ public class Constantes {
     public static final String 	VALIDACIONLETRA = "A";
     public static final int HORASDELDIA = 24;
     public static final long FACTORMILISEG2HORAS = 3600000;
+    public static final String ENDPOINT = "https://www.superfinanciera.gov.co/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService";
     
     private Constantes(){
     	throw new IllegalStateException("Utility class");
     }
    
-    
     public static FechaCalendario getFechaActual() {
     	Calendar calendar = Calendar.getInstance();
     	int year=calendar.get(Calendar.YEAR);

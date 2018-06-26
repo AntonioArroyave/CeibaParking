@@ -1,7 +1,5 @@
 package com.ceiba.ceibaparkin;
 
-
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +28,17 @@ import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
 import com.ceiba.ceibaparking.service.impl.VigilanteServiceImpl;
 import com.ceiba.ceibaparking.validation.ingreso.ValidarPlacaIniciadaEnA;
 
+import co.com.sc.nexura.superfinanciera.action.generic.services.trm.action.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 @Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=CeibaParkingApplication.class)
-public class ParkingController {
+public class VigilnateTest {
 	
-	private static final Log LOG = LogFactory.getLog(ParkingController.class);
+	private static final Log LOG = LogFactory.getLog(VigilnateTest.class);
 	
 	@Autowired
 	@Qualifier("vehiculoRepository")
@@ -103,15 +102,16 @@ public class ParkingController {
 		}
 	}
 	
-//	@Test(expected = ParqueaderoExcepcion.class)
-//	public void verificarPlacaIniciadaPorADiaInvalido() {
-//		VehiculoTestDataBuilder vehiculoTestDataBuilder = new VehiculoTestDataBuilder();
-//		vehiculoTestDataBuilder.conPlaca("AAA-111");
-//		Carro carroPlacaA =vehiculoTestDataBuilder.buildCarro();
-//		Calendar hoy = mock(Calendar.class);
-//		when(hoy.get(Calendar.DAY_OF_WEEK)).thenReturn(Calendar.FRIDAY);
-//		vigilanteService.registrarIngreso(carroPlacaA);
-//	}
+	@Test(expected = ParqueaderoExcepcion.class)
+	public void verificarPlacaIniciadaPorADiaInvalido() {
+		VehiculoTestDataBuilder vehiculoTestDataBuilder = new VehiculoTestDataBuilder();
+		vehiculoTestDataBuilder.conPlaca("AAA-111");
+		Carro carroPlacaA =vehiculoTestDataBuilder.buildCarro();
+		Calendar hoy = mock(Calendar.class);
+		when(hoy.get(Calendar.DAY_OF_WEEK)).thenReturn(Calendar.FRIDAY);
+		vigilanteService.registrarIngreso(carroPlacaA);
+	}
+	
 //No funciona el mock, creo que es un problema de contextos y el configure de la aplicacion.	
 //	@Test
 //	public void verificarPlacaIniciadaPorADiaValido() {
@@ -202,5 +202,11 @@ public class ParkingController {
 		int totalApagar =vigilanteService.calcularTotalApagar(carroEntity,horasApagar);
 		assertEquals(11000, totalApagar);
 	}
-
+	
+	  @Test
+	  public void webServiceTRMTest() {
+		TrmClient trmClient = new TrmClient(Constantes.ENDPOINT);
+		Float trm=trmClient.getTrm();
+	    assertNotNull(trm);
+	  }
 }

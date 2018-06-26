@@ -53,7 +53,5 @@ public class VehiculoEntity {
                 "Vehiculo[placa=%s, tipoVehiculo='%s']",
                 placa, tipoVehiculo);
     }
-	public VehiculoEntity() {
-		super();
-	}
+
 }

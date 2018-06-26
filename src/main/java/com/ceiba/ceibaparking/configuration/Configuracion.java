@@ -14,7 +14,6 @@ import com.ceiba.ceibaparking.validation.ingreso.ValidarCapacidadDeMotos;
 import com.ceiba.ceibaparking.validation.ingreso.ValidarIngresoVehiculo;
 import com.ceiba.ceibaparking.validation.ingreso.ValidarPlacaIniciadaEnA;
 
-
 @Configuration
 public class Configuracion {
 	

@@ -1,6 +1,7 @@
 package com.ceiba.ceibaparking.controller;
 
 import com.ceiba.ceibaparking.exception.*;
+import com.ceiba.ceibaparking.model.Constantes;
 import com.ceiba.ceibaparking.model.Vehiculo;
 import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
@@ -19,27 +20,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
-
-import TRMClient.*;
 import co.com.sc.nexura.superfinanciera.action.generic.services.trm.action.*;
 
 
 @RestController
 @RequestMapping("/")
-public class ParkingController {
+public class Vigilante {
 	
 	@Autowired
 	VehiculoRepository vehiculoRepoitory;
@@ -56,17 +49,14 @@ public class ParkingController {
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
-	private static final Log LOG = LogFactory.getLog(ParkingController.class);
 	
 	@GetMapping("/vehiculo") @CrossOrigin(origins = "http://localhost:4200")
 	public List<VehiculoEntity> obtenerVehiculos() {
-		LOG.info("Vehiculo Repository:   "+ vehiculoRepoitory.findAll().toString());
 	    return vehiculoRepoitory.findAll();
 	}
 
 	@PostMapping("/vehiculo") @CrossOrigin(origins = "http://localhost:4200")
 	public Optional<VehiculoEntity> registrarVehiculo(@RequestBody Vehiculo vehiculo) {
-		    LOG.info("*******Post /vehiculo whit data :   "+ vehiculo);
 			vigilanteService.registrarIngreso(vehiculo);
 			return vehiculoRepoitory.findById(vehiculo.getPlaca());
 	}
@@ -85,7 +75,6 @@ public class ParkingController {
 		final ObjectMapper mapperList = new ObjectMapper();
 		mapperList.writeValue(out, jsonString);
 		return new ResponseEntity<>(jsonString.toString(), HttpStatus.OK);
-		
 	}
 	
 	@GetMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
@@ -102,13 +91,10 @@ public class ParkingController {
 	@PutMapping("/vehiculo/{placa}") @CrossOrigin(origins = "http://localhost:4200")
 	public VehiculoEntity updateVehiculo(@PathVariable(value = "placa") String placa,
 	                                        @Valid @RequestBody VehiculoEntity vehiculoDetails) {
-
 	    VehiculoEntity vehiculo = vehiculoRepoitory.findById(placa)
 	            .orElseThrow(() -> new ParqueaderoExcepcion("Vehiculo placa"+placa));
-
 	    vehiculo.setPlaca(vehiculoDetails.getPlaca());
 	    vehiculo.setTipoVehiculo(vehiculoDetails.getTipoVehiculo());
-
 	    return vehiculoRepoitory.save(vehiculo);
 	}
 
@@ -128,11 +114,8 @@ public class ParkingController {
 	
 	@GetMapping("/TRM") @CrossOrigin(origins = "http://localhost:4200")
 	public Float getTRM() throws DatatypeConfigurationException {
-		String enpoint = "https://www.superfinanciera.gov.co/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService";
-		TrmClient trmClient = new TrmClient(enpoint);
-		LOG.info("**************Iniciando queryTRM: "+trmClient.getTrm());
+		TrmClient trmClient = new TrmClient(Constantes.ENDPOINT);
 		return 	trmClient.getTrm();
 	}
-	
 }
 
