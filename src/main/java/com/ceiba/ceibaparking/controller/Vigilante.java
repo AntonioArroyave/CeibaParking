@@ -10,7 +10,7 @@ import com.ceiba.ceibaparking.service.VigilanteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.ceiba.ceibaparkin.VigilnateTest;
+
 import com.ceiba.ceibaparking.entity.FacturaEntity;
 import com.ceiba.ceibaparking.entity.VehiculoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
