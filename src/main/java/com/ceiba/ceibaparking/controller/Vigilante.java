@@ -27,16 +27,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import co.com.sc.nexura.superfinanciera.action.generic.services.trm.action.*;
 
 @RestController
 @RequestMapping("/")
 public class Vigilante {
-	
-	private static final Log LOG = LogFactory.getLog(Vigilante.class);
 	
 	@Autowired
 	VehiculoRepository vehiculoRepoitory;
@@ -67,7 +63,6 @@ public class Vigilante {
 	
 	@GetMapping("/vehiculos") @CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<String> getVehiculos() throws IOException {
-		LOG.debug("*******getVehiculos");
 		List<VehiculoEntity> vehiculosEntity = vehiculoRepoitory.findAll();
 		List<String> jsonString = new ArrayList<>();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

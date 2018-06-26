@@ -1,7 +1,5 @@
 package com.ceiba.ceibaparking.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
