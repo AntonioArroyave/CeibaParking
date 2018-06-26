@@ -254,13 +254,14 @@ public class VigilnateTest {
 	    assertNotNull(trm);
 	  }
 	  
-//	  @Test
-//	  public void getVehiculosTest() throws Exception {
-//			vigilanteService.registrarIngreso(carro);
-//			mockMvc.perform(get("/vehiculos").content("")
-//	                .contentType(contentType))
-//	                .andExpect(status().isOk());
-//	  }
+	  @Test
+	  public void getVehiculosTest() throws Exception {
+			vigilanteService.registrarIngreso(carro);
+			vigilanteService.registrarIngreso(moto);
+			mockMvc.perform(get("/vehiculos")
+	                .contentType(contentType))
+	                .andExpect(status().isOk());
+	  }
 	  
 	  @Test
 	  public void obtenerVehiculosTest() throws Exception {
@@ -307,12 +308,12 @@ public class VigilnateTest {
 	                .andExpect(status().isOk());
 	  }
 	  
-//	  @Test
-//	  public void updateVehiculoTest() throws Exception {
-//			vigilanteService.registrarIngreso(carro);
-//			VehiculoEntity carroEntity = vehiculoConverter.model2Entity(carro);
-//			mockMvc.perform(delete("/vehiculo/"+carro.getPlaca()).content("") //carro.getPlaca(),carroEntity
-//	                .contentType(contentType))
-//	                .andExpect(status().isOk());
-//	  }
+	  @Test
+	  public void updateVehiculoTest() throws Exception {
+			vigilanteService.registrarIngreso(carro);
+			mockMvc.perform(put("/vehiculo/"+carro.getPlaca())
+					.contentType(contentType)
+					.content("{\"placa\":\""+carro.getPlaca()+"\", \"tipoVehiculo\":\""+moto.getTipoVehiculo()+"\",\"cilindraje\":0}"))
+	                .andExpect(status().isOk());
+	  }
 }
