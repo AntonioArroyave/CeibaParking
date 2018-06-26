@@ -35,6 +35,7 @@ import com.ceiba.ceibaparking.exception.ParqueaderoExcepcion;
 import com.ceiba.ceibaparking.model.Carro;
 import com.ceiba.ceibaparking.model.Moto;
 import com.ceiba.ceibaparking.model.Constantes;
+
 import com.ceiba.ceibaparking.repository.FacturaRepository;
 import com.ceiba.ceibaparking.repository.VehiculoRepository;
 import com.ceiba.ceibaparking.repository.converter.VehiculoConverter;
@@ -316,4 +317,5 @@ public class VigilnateTest {
 					.content("{\"placa\":\""+carro.getPlaca()+"\", \"tipoVehiculo\":\""+moto.getTipoVehiculo()+"\",\"cilindraje\":0}"))
 	                .andExpect(status().isOk());
 	  }
+	  
 }
